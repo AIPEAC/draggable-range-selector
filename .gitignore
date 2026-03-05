@@ -1,0 +1,24 @@
+# Dart/Flutter
+.dart_tool/
+.flutter_sync_logs
+build/
+.packages
+
+# Generated files
+*.g.dart
+*.config.dart
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+​Thumbs.db
+
+# Project
+coverage/
+.coverage
