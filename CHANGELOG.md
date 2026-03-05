@@ -1,3 +1,7 @@
+## 1.0.3
+
+- Fix typo in example.
+
 ## 1.0.2
 
 - Added one GIF as example usage.
