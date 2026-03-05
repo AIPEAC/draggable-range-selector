@@ -1,4 +1,4 @@
-# DraggableRangeSelector
+# Draggable Range Selector
 
 A flexible Flutter widget for selecting ranges of items with draggable handles. Features a dynamic grid layout, two display modes (transparent overlay or lens effect), and full customization options.
 
