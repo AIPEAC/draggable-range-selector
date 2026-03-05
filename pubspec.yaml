@@ -1,6 +1,6 @@
 name: draggable_range_selector
-description: A flexible Flutter widget for selecting ranges of items with draggable handles. Features a dynamic grid layout, two display modes (transparent overlay or lens effect), and full customization of colors, sizes, and behavior.
-version: 1.0.0
+description: Flutter widget for selecting ranges of items with draggable handles.
+version: 1.0.1
 homepage: https://github.com/AIPEAC/draggable-range-selector
 repository: https://github.com/AIPEAC/draggable-range-selector
 issue_tracker: https://github.com/AIPEAC/draggable-range-selector/issues

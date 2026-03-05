@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Fixed pubspec.yaml description length for pub.dev compliance
+
 ## 1.0.0
 
 - Initial release of DraggableRangeSelector widget
