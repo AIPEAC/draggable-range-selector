@@ -7,9 +7,7 @@ A flexible Flutter widget for selecting ranges of items with draggable handles. 
 ✨ **Dynamic Grid Layout** - Automatically arranges items based on their actual widths, not fixed columns
 
 🎯 **Draggable Handles** - Intuitive range selection with smooth drag interactions
-![msedge_Yp0f6A46eV](https://github.com/user-attachments/assets/3970039f-20b8-4e02-807c-f337d231a403)
-
-
+<img width="1103" height="228" alt="image" src="https://github.com/user-attachments/assets/38087532-e49d-4bf8-80b8-c55cf648ba32" />
 
 🎨 **Two Display Modes**:
   - Transparent overlay mode for subtle visual feedback
