@@ -1,3 +1,7 @@
+## 1.0.1.1
+
+- Added one GIF as example usage.
+
 ## 1.0.1
 
 - Fixed pubspec.yaml description length for pub.dev compliance
