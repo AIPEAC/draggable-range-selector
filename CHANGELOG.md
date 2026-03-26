@@ -1,3 +1,7 @@
+## 1.2.1+1
+
+- Updated new example GIF.
+
 ## 1.2.1
 
 - Optimized row snap lookup by caching each row's starting Y coordinate in memory.
