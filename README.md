@@ -36,7 +36,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  draggable_range_selector: ^1.1.0
+  draggable_range_selector: ^1.2.1
 ```
 
 Then run:
