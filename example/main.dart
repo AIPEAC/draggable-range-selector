@@ -319,16 +319,19 @@ class _March2026LensExampleState extends State<March2026LensExample> {
             final usableWidth = (constraints.maxWidth - horizontalPadding).clamp(280.0, 900.0);
             final cellWidth = (usableWidth - (6 * interCellSpacingTarget)) / 7;
 
-            return Column(
+            return ListView(
+              padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 20),
                 const Text(
                   'March 2026',
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
                 const Text(
                   'SUN  MON  TUE  WED  THU  FRI  SAT',
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, letterSpacing: 1.0, color: Colors.black54),
                 ),
                 const SizedBox(height: 18),
@@ -341,7 +344,8 @@ class _March2026LensExampleState extends State<March2026LensExample> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Expanded(
+                SizedBox(
+                  height: 520,
                   child: DraggableRangeSelector(
                     title: null,
                     initialWords: _words,
@@ -373,6 +377,7 @@ class _March2026LensExampleState extends State<March2026LensExample> {
                     },
                   ),
                 ),
+                const SizedBox(height: 12),
               ],
             );
           },

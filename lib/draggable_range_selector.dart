@@ -635,7 +635,11 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
       if (renderBox != null) {
         final localPos = renderBox.globalToLocal(_leftHandleDragPosition!);
         leftHandleX = localPos.dx;
-        final idx = _getDayIndexFromPosition(localPos.dx, localPos.dy);
+        final idx = _getDayIndexFromLocalPosition(
+          localPos.dx,
+          localPos.dy,
+          isStartHandle: true,
+        );
         if (idx != null) {
           final (row, _, _) = _getRowInfo(idx);
           leftHandleY = row * _rowHeightWithSpacing;
@@ -648,7 +652,11 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
       if (renderBox != null) {
         final localPos = renderBox.globalToLocal(_rightHandleDragPosition!);
         rightHandleX = localPos.dx;
-        final idx = _getDayIndexFromPosition(localPos.dx, localPos.dy);
+        final idx = _getDayIndexFromLocalPosition(
+          localPos.dx,
+          localPos.dy,
+          isStartHandle: false,
+        );
         if (idx != null) {
           final (row, _, _) = _getRowInfo(idx);
           rightHandleY = row * _rowHeightWithSpacing;
@@ -967,9 +975,10 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
     return Column(children: rows);
   }
 
-  /// Calculates total height needed for grid
-  double _calculateGridHeight() {
-    final wordsPerRow = _getWordsPerRow();
+  /// Calculates total height needed for grid using the actual layout width
+  double _calculateGridHeight(double availableWidth) {
+    final wordsPerRow = _getWordsPerRow(width: availableWidth);
+    if (wordsPerRow.isEmpty) return 0;
     return (wordsPerRow.length * widget.config.cellHeight) +
         ((wordsPerRow.length - 1) * widget.config.rowSpacing);
   }
@@ -1024,14 +1033,15 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
             // Item grid with dynamic layout
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                height: _calculateGridHeight(),
-                child: Container(
-                  key: _containerKey,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final totalWidth = constraints.maxWidth;
-                      return Stack(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final totalWidth = constraints.maxWidth;
+                  final gridHeight = _calculateGridHeight(totalWidth);
+                  return SizedBox(
+                    height: gridHeight,
+                    child: Container(
+                      key: _containerKey,
+                      child: Stack(
                         children: [
                           // Base item cells
                           _buildItemGrid(totalWidth),
@@ -1042,10 +1052,10 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                           // Handles and blue fill overlay
                           _buildHandles(),
                         ],
-                      );
-                    },
-                  ),
-                ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
 
