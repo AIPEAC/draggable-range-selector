@@ -57,6 +57,16 @@ class DemosPage extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const CallbackExample()),
             ),
           ),
+          const SizedBox(height: 16),
+          _buildExampleCard(
+            context,
+            'March 2026 (Lens Mode)',
+            'Month grid with 7-day rows and snap-updating range text',
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const March2026LensExample()),
+            ),
+          ),
         ],
       ),
     );
@@ -227,7 +237,7 @@ class _CallbackExampleState extends State<CallbackExample> {
               showManagementUI: true,
               onSelectionChanged: (start, end) {
                 setState(() {
-                  final words = const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                  const words = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                   selectedRange = '${words[start]} - ${words[end]}';
                 });
               },
@@ -239,6 +249,134 @@ class _CallbackExampleState extends State<CallbackExample> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Example 4: Month-style calendar selection in lens mode
+class March2026LensExample extends StatefulWidget {
+  const March2026LensExample({super.key});
+
+  @override
+  State<March2026LensExample> createState() => _March2026LensExampleState();
+}
+
+class _March2026LensExampleState extends State<March2026LensExample> {
+  static const String _emptyCell = '--';
+  static const List<int?> _marchSlots = [
+    1, 2, 3, 4, 5, 6, 7,
+    8, 9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28,
+    29, 30, 31, null, null, null, null,
+  ];
+
+  late int _start;
+  late int _end;
+
+  List<String> get _words => _marchSlots
+      .map((day) => day == null ? _emptyCell : day.toString().padLeft(2, '0'))
+      .toList(growable: false);
+
+  @override
+  void initState() {
+    super.initState();
+    _start = 7; // 03/08
+    _end = 13; // 03/14
+  }
+
+  int _nearestRealDayIndex(int index, {required bool searchForward}) {
+    if (_marchSlots[index] != null) return index;
+    if (searchForward) {
+      for (int i = index; i < _marchSlots.length; i++) {
+        if (_marchSlots[i] != null) return i;
+      }
+    } else {
+      for (int i = index; i >= 0; i--) {
+        if (_marchSlots[i] != null) return i;
+      }
+    }
+    return 0;
+  }
+
+  String _formatAt(int index, {required bool isStart}) {
+    final resolved = _nearestRealDayIndex(index, searchForward: isStart);
+    final day = _marchSlots[resolved] ?? 1;
+    return '03/${day.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('March 2026 Lens Example')),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const horizontalPadding = 48.0;
+            const rowSpacing = 8.0;
+            const interCellSpacingTarget = 8.0;
+            final usableWidth = (constraints.maxWidth - horizontalPadding).clamp(280.0, 900.0);
+            final cellWidth = (usableWidth - (6 * interCellSpacingTarget)) / 7;
+
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'March 2026',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'SUN  MON  TUE  WED  THU  FRI  SAT',
+                  style: TextStyle(fontSize: 12, letterSpacing: 1.0, color: Colors.black54),
+                ),
+                const SizedBox(height: 18),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'You have selected: "${_formatAt(_start, isStart: true)}" to "${_formatAt(_end, isStart: false)}"',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: DraggableRangeSelector(
+                    title: null,
+                    initialWords: _words,
+                    initialSelectedStart: _start,
+                    initialSelectedEnd: _end,
+                    showManagementUI: false,
+                    config: DraggableRangeSelectorConfig(
+                      initialDisplayMode: 1, // lens mode
+                      rowSpacing: rowSpacing,
+                      minCellWidth: cellWidth,
+                      maxCellWidth: cellWidth,
+                      cellPadding: 0,
+                      cellHeight: 52,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      selectionColor: const Color(0xFF1976D2),
+                      handleColor: const Color(0xFF0D47A1),
+                      cellBackgroundColor: const Color(0xFFE6E9EF),
+                      selectedCellBackgroundColor: Colors.transparent,
+                      textColor: const Color(0xFF374151),
+                      selectedTextColor: Colors.white,
+                      borderRadius: 8,
+                    ),
+                    onSelectionChanged: (start, end) {
+                      setState(() {
+                        _start = start;
+                        _end = end;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
