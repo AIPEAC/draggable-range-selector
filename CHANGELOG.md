@@ -1,3 +1,14 @@
+## 1.2.0+1
+
+- Migrated example app to the standard Flutter layout using `example/lib/main.dart`.
+- Removed legacy duplicate entrypoint file `example/main.dart` to avoid confusion.
+
+## 1.2.0
+
+- Added `onSelectionChanging` callback to provide real-time range updates while a handle is being dragged.
+- Updated drag interaction flow so consumers can render live selection text before drag end/snap finalize.
+- Improved the calendar-style example to show real-time selected date range updates during drag.
+
 ## 1.1.0
 
 - Added `fixedItemsPerRow` to `DraggableRangeSelectorConfig` to support fixed-column layouts (for example, 7-day calendar rows).

@@ -144,6 +144,8 @@ class DraggableRangeSelector extends StatefulWidget {
 
   /// Called when selection changes
   final void Function(int start, int end)? onSelectionChanged;
+  /// Called continuously while dragging a handle
+  final void Function(int start, int end)? onSelectionChanging;
 
   /// Called when words list changes
   final void Function(List<String> words)? onWordsChanged;
@@ -161,6 +163,7 @@ class DraggableRangeSelector extends StatefulWidget {
     this.initialSelectedEnd = 6,
     this.config = const DraggableRangeSelectorConfig(),
     this.onSelectionChanged,
+    this.onSelectionChanging,
     this.onWordsChanged,
     this.showManagementUI = true,
     this.title,
@@ -515,9 +518,17 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                   });
                 },
                 onHorizontalDragUpdate: (details) {
+                  final previewIdx = _getDayIndexFromPosition(
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
+                    isStartHandle: true,
+                  );
                   setState(() {
                     _leftHandleDragPosition = details.globalPosition;
                   });
+                  if (previewIdx != null && previewIdx <= selectedEnd && previewIdx < words.length) {
+                    widget.onSelectionChanging?.call(previewIdx, selectedEnd);
+                  }
                 },
                 onHorizontalDragEnd: (details) {
                   final newIdx = _getDayIndexFromPosition(
@@ -568,9 +579,17 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                   });
                 },
                 onHorizontalDragUpdate: (details) {
+                  final previewIdx = _getDayIndexFromPosition(
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
+                    isStartHandle: false,
+                  );
                   setState(() {
                     _rightHandleDragPosition = details.globalPosition;
                   });
+                  if (previewIdx != null && previewIdx >= selectedStart && previewIdx < words.length) {
+                    widget.onSelectionChanging?.call(selectedStart, previewIdx);
+                  }
                 },
                 onHorizontalDragEnd: (details) {
                   final newIdx = _getDayIndexFromPosition(
