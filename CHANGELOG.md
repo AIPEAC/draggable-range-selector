@@ -1,6 +1,6 @@
 ## 1.2.1+3
 
-- Rearange
+- Rearrange ReadMe structure.
 
 ## 1.2.1+2
 
