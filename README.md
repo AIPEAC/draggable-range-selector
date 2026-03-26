@@ -8,9 +8,6 @@ A flexible Flutter widget for selecting ranges of items with draggable handles. 
 
 🎯 **Draggable Handles** - Intuitive range selection with smooth drag interactions
 
-
-
-
 🎨 **Two Display Modes**:
   - Lens effect mode that reveals content underneath
 ![ezgif-6198d80c35faa835](https://github.com/user-attachments/assets/17c7aad5-1395-4a9c-847c-691f0822beae)
