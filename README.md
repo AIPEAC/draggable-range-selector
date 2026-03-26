@@ -4,7 +4,7 @@ A flexible Flutter widget for selecting ranges of items with draggable handles. 
 
 ## Features
 
-✨ **Dynamic Grid Layout** - Automatically arranges items based on their actual widths, not fixed columns
+✨ **Dynamic Grid Layout** - Automatically arranges items based on their actual widths, or use fixed columns when needed
 
 🎯 **Draggable Handles** - Intuitive range selection with smooth drag interactions
 ![msedge_M1dc6w1GYM](https://github.com/user-attachments/assets/82a7887b-fdc2-4bc5-b469-bab3ac91adfc)
@@ -33,7 +33,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  draggable_range_selector: ^1.0.3
+  draggable_range_selector: ^1.1.0
 ```
 
 Then run:
@@ -82,6 +82,23 @@ DraggableRangeSelector(
 )
 ```
 
+### Fixed Columns (e.g. 7-day calendar rows)
+
+```dart
+DraggableRangeSelector(
+  initialWords: const [
+    '01', '02', '03', '04', '05', '06', '07',
+    '08', '09', '10', '11', '12', '13', '14',
+  ],
+  initialSelectedStart: 7,
+  initialSelectedEnd: 10,
+  config: const DraggableRangeSelectorConfig(
+    initialDisplayMode: 1, // lens mode
+    fixedItemsPerRow: 7,   // enforce exactly 7 cells per row
+  ),
+)
+```
+
 ## Configuration Options
 
 ### Colors
@@ -115,6 +132,7 @@ DraggableRangeSelector(
 |-----------|---------|-------------|
 | `initialDisplayMode` | `0` | Display mode: 0 (transparent) or 1 (lens) |
 | `initialTransparency` | `50.0` | Opacity for transparent mode (0-100) |
+| `fixedItemsPerRow` | `null` | Optional fixed number of items per row (e.g. `7` for calendar weeks) |
 | `showManagementUI` | `true` | Show/hide add/edit/move buttons |
 
 ## Callbacks

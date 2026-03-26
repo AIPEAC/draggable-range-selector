@@ -1,12 +1,19 @@
-## 1.0.3
+## 1.1.0
+
+- Added `fixedItemsPerRow` to `DraggableRangeSelectorConfig` to support fixed-column layouts (for example, 7-day calendar rows).
+- Fixed lens mode reveal behavior while dragging so the lens layer tracks handle movement consistently.
+- Fixed first-render layout overflow by calculating grid height from the actual available width.
+- Updated drag row snap calculations to use configured `cellHeight` and `rowSpacing` instead of hardcoded values.
+
+## 1.0.0+3
 
 - Fix typo in example.
 
-## 1.0.2
+## 1.0.0+2
 
 - Added one GIF as example usage.
 
-## 1.0.1
+## 1.0.0+1
 
 - Fixed pubspec.yaml description length for pub.dev compliance
 

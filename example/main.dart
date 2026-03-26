@@ -303,7 +303,7 @@ class _March2026LensExampleState extends State<March2026LensExample> {
   String _formatAt(int index, {required bool isStart}) {
     final resolved = _nearestRealDayIndex(index, searchForward: isStart);
     final day = _marchSlots[resolved] ?? 1;
-    return '03/${day.toString().padLeft(2, '0')}';
+    return 'Mar-${day.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -354,6 +354,7 @@ class _March2026LensExampleState extends State<March2026LensExample> {
                     showManagementUI: false,
                     config: DraggableRangeSelectorConfig(
                       initialDisplayMode: 1, // lens mode
+                      fixedItemsPerRow: 7,
                       rowSpacing: rowSpacing,
                       minCellWidth: cellWidth,
                       maxCellWidth: cellWidth,

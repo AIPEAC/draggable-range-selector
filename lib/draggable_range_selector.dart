@@ -104,6 +104,7 @@ class DraggableRangeSelectorConfig {
   // Layout
   final EdgeInsets containerPadding;
   final double borderRadius;
+  final int? fixedItemsPerRow;
 
   const DraggableRangeSelectorConfig({
     this.selectionColor = const Color(0xFF2196F3),
@@ -125,6 +126,7 @@ class DraggableRangeSelectorConfig {
     this.initialTransparency = 50.0,
     this.containerPadding = const EdgeInsets.all(24.0),
     this.borderRadius = 8.0,
+    this.fixedItemsPerRow,
   });
 }
 
@@ -238,12 +240,12 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
     final wordsPerRow = _getWordsPerRow();
     if (wordsPerRow.isEmpty || words.isEmpty) return null;
 
-    int currentY = 0;
+    double currentY = 0;
     int currentIdx = 0;
 
     for (int rowIdx = 0; rowIdx < wordsPerRow.length; rowIdx++) {
-      final rowHeight = 50;
-      final rowSpacing = 8;
+      final rowHeight = widget.config.cellHeight;
+      final rowSpacing = widget.config.rowSpacing;
       final rowEnd = currentY + rowHeight;
 
       // Check if in this row or in the spacing after it (snap to this row)
@@ -294,6 +296,18 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
   /// Returns list of word counts per row
   List<int> _calculateWordLayout(double availableWidth) {
     if (words.isEmpty) return [];
+
+    final fixedItemsPerRow = widget.config.fixedItemsPerRow;
+    if (fixedItemsPerRow != null && fixedItemsPerRow > 0) {
+      final rowCounts = <int>[];
+      int remaining = words.length;
+      while (remaining > 0) {
+        final rowSize = remaining >= fixedItemsPerRow ? fixedItemsPerRow : remaining;
+        rowCounts.add(rowSize);
+        remaining -= rowSize;
+      }
+      return rowCounts;
+    }
 
     final minCellWidth = widget.config.minCellWidth;
     final maxCellWidth = widget.config.maxCellWidth;
