@@ -211,12 +211,37 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
 
   /// Cached layout: how many words per row based on actual word widths
   List<int>? _cachedWordsPerRow;
+  /// Cached row start Y coordinates for fast row lookup
+  List<double>? _cachedRowStartYs;
 
   /// Last width used for layout calculation (to detect when recalculation needed)
   double? _lastLayoutWidth;
 
   /// Helper to get row height including spacing
   double get _rowHeightWithSpacing => widget.config.cellHeight + widget.config.rowSpacing;
+
+  List<double> _buildRowStartYs(int rowCount) {
+    return List<double>.generate(rowCount, (rowIdx) => rowIdx * _rowHeightWithSpacing);
+  }
+
+  int _findRowIndexByY(double localY, List<double> rowStartYs) {
+    if (rowStartYs.isEmpty) return -1;
+    int low = 0;
+    int high = rowStartYs.length - 1;
+    int best = -1;
+
+    // Binary search for largest rowStartY <= localY.
+    while (low <= high) {
+      final mid = (low + high) >> 1;
+      if (rowStartYs[mid] <= localY) {
+        best = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return best;
+  }
 
   /// Calculates which day index corresponds to a global position
   /// Dynamically handles varying row lengths
@@ -242,57 +267,45 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
     // Calculate rows based on word count
     final wordsPerRow = _getWordsPerRow();
     if (wordsPerRow.isEmpty || words.isEmpty) return null;
-
-    double currentY = 0;
-    int currentIdx = 0;
-
-    for (int rowIdx = 0; rowIdx < wordsPerRow.length; rowIdx++) {
-      final rowHeight = widget.config.cellHeight;
-      final rowSpacing = widget.config.rowSpacing;
-      final rowEnd = currentY + rowHeight;
-
-      // Check if in this row or in the spacing after it (snap to this row)
-      final nextRowStart = rowEnd + rowSpacing;
-      final isInRowOrSpacing =
-          localY >= currentY && (localY < nextRowStart || rowIdx == wordsPerRow.length - 1);
-
-      if (isInRowOrSpacing) {
-        // Found the row
-        final wordsInRow = wordsPerRow[rowIdx];
-        final dayWidth = totalWidth / wordsInRow;
-        final positionInRow = localX / dayWidth;
-        final cellIndex = positionInRow.floor().clamp(0, wordsInRow - 1);
-
-        // Calculate position within the cell (0.0 to 1.0)
-        final positionInCell = positionInRow - cellIndex;
-
-        // Snapping logic depends on which handle is being dragged:
-        // - Left handle (isStart: true) positions at LEFT edge of returned word
-        // - Right handle (isStart: false) positions at RIGHT edge of returned word
-        int wordIdx = cellIndex;
-
-        if (isStartHandle) {
-          // Left handle: if >= 50% into cell, snap to right edge by returning next word
-          if (positionInCell >= 0.5 && currentIdx + cellIndex + 1 < words.length) {
-            wordIdx = cellIndex + 1;
-          }
-        } else {
-          // Right handle: if < 50% into cell, snap to left edge by returning previous word
-          if (positionInCell < 0.5 && cellIndex > 0) {
-            wordIdx = cellIndex - 1;
-          }
-        }
-
-        final idx = currentIdx + wordIdx;
-        return idx.clamp(0, words.length - 1);
-      }
-
-      currentIdx += wordsPerRow[rowIdx];
-      currentY = nextRowStart;
+    final rowStartYs = _cachedRowStartYs ?? _buildRowStartYs(wordsPerRow.length);
+    final rowIdx = _findRowIndexByY(localY, rowStartYs);
+    if (rowIdx < 0 || rowIdx >= wordsPerRow.length) {
+      // If above first row or below all rows, preserve legacy fallback behavior.
+      return words.length - 1;
     }
 
-    // If below all rows, return last word
-    return words.length - 1;
+    int currentIdx = 0;
+    for (int i = 0; i < rowIdx; i++) {
+      currentIdx += wordsPerRow[i];
+    }
+
+    final wordsInRow = wordsPerRow[rowIdx];
+    final dayWidth = totalWidth / wordsInRow;
+    final positionInRow = localX / dayWidth;
+    final cellIndex = positionInRow.floor().clamp(0, wordsInRow - 1);
+
+    // Calculate position within the cell (0.0 to 1.0)
+    final positionInCell = positionInRow - cellIndex;
+
+    // Snapping logic depends on which handle is being dragged:
+    // - Left handle (isStart: true) positions at LEFT edge of returned word
+    // - Right handle (isStart: false) positions at RIGHT edge of returned word
+    int wordIdx = cellIndex;
+
+    if (isStartHandle) {
+      // Left handle: if >= 50% into cell, snap to right edge by returning next word
+      if (positionInCell >= 0.5 && currentIdx + cellIndex + 1 < words.length) {
+        wordIdx = cellIndex + 1;
+      }
+    } else {
+      // Right handle: if < 50% into cell, snap to left edge by returning previous word
+      if (positionInCell < 0.5 && cellIndex > 0) {
+        wordIdx = cellIndex - 1;
+      }
+    }
+
+    final idx = currentIdx + wordIdx;
+    return idx.clamp(0, words.length - 1);
   }
 
   /// Calculates dynamic word layout based on actual word widths
@@ -372,6 +385,7 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
     // If width provided and different from last, recalculate
     if (width != null && width != _lastLayoutWidth) {
       _cachedWordsPerRow = _calculateWordLayout(width);
+      _cachedRowStartYs = _buildRowStartYs(_cachedWordsPerRow!.length);
       _lastLayoutWidth = width;
     }
 
@@ -889,6 +903,7 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                   words.add(controller.text.trim());
                   // Clear layout cache
                   _cachedWordsPerRow = null;
+                  _cachedRowStartYs = null;
                   _lastLayoutWidth = null;
                   // Adjust selection if needed
                   if (selectedStart >= words.length) selectedStart = words.length - 1;
@@ -926,6 +941,7 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                   words[index] = controller.text.trim();
                   // Clear layout cache since word width changed
                   _cachedWordsPerRow = null;
+                  _cachedRowStartYs = null;
                   _lastLayoutWidth = null;
                 });
                 widget.onWordsChanged?.call(words);
@@ -963,6 +979,7 @@ class _DraggableRangeSelectorState extends State<DraggableRangeSelector> {
                   words.insert(newPos - 1, word);
                   // Clear layout cache since word order changed
                   _cachedWordsPerRow = null;
+                  _cachedRowStartYs = null;
                   _lastLayoutWidth = null;
                   // Adjust selection if needed
                   if (selectedStart >= words.length) selectedStart = words.length - 1;

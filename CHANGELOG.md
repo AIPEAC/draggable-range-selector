@@ -1,3 +1,9 @@
+## 1.2.1
+
+- Optimized row snap lookup by caching each row's starting Y coordinate in memory.
+- Replaced linear row scanning with binary search (`O(log n)`) when resolving snap row from drag Y position.
+- Kept row-start cache in sync whenever layout/words are recalculated.
+
 ## 1.2.0+1
 
 - Migrated example app to the standard Flutter layout using `example/lib/main.dart`.
