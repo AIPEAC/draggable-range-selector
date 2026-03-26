@@ -1,3 +1,7 @@
+## 1.2.1+3
+
+- Rearange
+
 ## 1.2.1+2
 
 - Fix link of example GIF.
