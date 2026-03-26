@@ -1,6 +1,6 @@
 name: draggable_range_selector_example
 description: Example application demonstrating the DraggableRangeSelector widget.
-version: 1.0.0
+version: 1.1.0
 publish_to: none
 
 environment:
