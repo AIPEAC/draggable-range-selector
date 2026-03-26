@@ -1,3 +1,7 @@
+## 1.2.1+2
+
+- Fix link of example GIF.
+
 ## 1.2.1+1
 
 - Updated new example GIF.
