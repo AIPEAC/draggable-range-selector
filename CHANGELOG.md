@@ -1,6 +1,6 @@
 ## 1.2.1+3
 
-- Rearrange ReadMe structure.
+- Rewrite README.
 
 ## 1.2.1+2
 
